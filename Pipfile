@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+keract = ">=4.4.0"
+nltk = "*"
+scipy = "*"
+sklearn = "*"
+tensorflow = "*"
+gym = "*"
+pandas = "*"
+matplotlib = "*"
+numpy = "*"
+keras = "*"
+keras-rl = "*"
+
+[dev-packages]
+black = "*"
+
+[requires]
+python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true
