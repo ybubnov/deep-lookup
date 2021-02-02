@@ -1,4 +1,4 @@
-# DNS Threat - Deep Learning for DNS-tunneling and DGA-names detection
+# Deep Lookup - Deep Learning for Domain Name System
 
 ## Publications
 1. _Text analysis of DNS queries for data exfiltration protection of computer networks_, [Bubnov & Ivanov, 2020](https://doi.org/10.37661/1816-0301-2020-17-3-78-86)
