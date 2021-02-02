@@ -4,8 +4,8 @@ from functools import partial
 import matplotlib.pyplot as plt
 import numpy as np
 
-from dnsthreat import bigram, datasets, metrics, nn, svm, vis
-from dnsthreat.metrics import confusion_matrix
+from deeplookup import bigram, datasets, metrics, nn, svm, vis
+from deeplookup.metrics import confusion_matrix
 
 
 ROOT_DIR = "csv-datasets"

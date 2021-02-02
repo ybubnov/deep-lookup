@@ -1,5 +1,3 @@
-# @title Malware Environment
-
 from enum import Enum
 
 import gym

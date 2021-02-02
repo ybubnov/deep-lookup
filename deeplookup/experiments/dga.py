@@ -4,7 +4,7 @@ from functools import partial
 import matplotlib.pyplot as plt
 import numpy as np
 
-from dnsthreat import datasets, metrics, nn, vis
+from deeplookup import datasets, metrics, nn, vis
 
 
 ROOT_DIR = "csv-datasets"

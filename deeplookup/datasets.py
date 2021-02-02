@@ -1,6 +1,7 @@
+import random
 import string
 from dataclasses import dataclass, field
-from typing import Callable
+from typing import Callable, Tuple
 
 import numpy as np
 import pandas as pd
@@ -123,6 +124,52 @@ def cast_irdtun2(
     x_true = np.asarray(x_true, dtype="int64") if encode else np.asarray(x_true)
 
     return x_true, np.asarray(y_true)
+
+
+def load_ts(
+    num: int = 100,
+    window_ratio: float = 0.1,
+    window_prob: float = 0.5,
+    to_categorical: bool = False,
+    noise_ratio: int = 0.2,
+):
+    """Create a dataset for timeseries classification problem.
+
+    Change window ratio and probability to get the different behavior
+    modelling for DNS threats.
+    """
+    window_len = int(num * window_ratio)
+    probs = [random.random() % window_prob for _ in range(num)]
+
+    x_train, y_train = [], []
+    assembly_num = 1 if window_len == 0 else num - window_len + 1
+
+    for i in range(assembly_num):
+        x = probs.copy()
+        y = [0] * len(x)
+
+        for j in range(window_len):
+            x[i + j] = window_prob + (random.random() % (1 - window_prob))
+            y[i + j] = 1
+
+        x_train.append(x)
+        if to_categorical:
+            y = 1 if window_ratio > noise_ratio else 0
+
+        y_train.append(y)
+
+    return np.array(x_train), np.array(y_train)
+
+
+def load_train_ts(num: int = 200) -> Tuple[np.array, np.array]:
+    x_train, y_train = [], []
+
+    for w in np.arange(0.0, 0.4, 0.05):
+        x, y = load_ts(num, window_ratio=w, to_categorical=True)
+        x_train.append(x)
+        y_train.append(y)
+
+    return np.concatenate(x_train), np.concatenate(y_train)
 
 
 @dataclass

@@ -12,6 +12,8 @@ from sklearn.metrics import (
     recall_score,
 )
 
+from deeplookup import datasets
+
 
 def eval_class(y_pred: np.array, y_true: np.array, average: str = "binary") -> None:
     """Print metrics and confusion matrix for the given predictions."""
@@ -71,3 +73,49 @@ def eval(
             eval_class(y_pr, y_true)
 
     return y_test, y_prob
+
+
+def ts_score(
+        model, window_prob: float = 0.5, to_categorical: bool = True
+) -> pd.DataFrame:
+    experiments = []
+
+    for window_ratio in np.arange(0.0, 1.0, 0.1):
+        x_test, y_test = datasets.load_ts(
+            num=200,
+            window_ratio=window_ratio,
+            window_prob=window_prob,
+            to_categorical=to_categorical,
+        )
+
+        if to_categorical:
+            y_pred = model.predict(x_test)
+            accuracy = accuracy_score(y_test, y_pred, normalize=True)
+            precision = precision_score(y_test, y_pred, zero_division=0.0)
+            recall = recall_score(y_test, y_pred, zero_division=0.0)
+            f1 = f1_score(y_test, y_pred, zero_division=0.0)
+        else:
+            accuracy, precision, recall, f1 = [], [], [], []
+            for x, y in zip(x_test, y_test):
+                y_pred = model.predict(x)
+                accuracy.append(accuracy_score(y, y_pred, normalize=True))
+                precision.append(precision_score(y, y_pred, zero_division=0.0))
+                recall.append(recall_score(y, y_pred, zero_division=0.0))
+                f1.append(f1_score(y, y_pred, zero_division=0.0))
+
+            accuracy = np.average(accuracy)
+            precision = np.average(precision)
+            recall = np.average(recall)
+            f1 = np.average(f1)
+
+        experiments.append(
+            dict(
+                window_ratio=window_ratio,
+                accuracy=accuracy,
+                precision=precision,
+                recall=recall,
+                f1=f1,
+            )
+        )
+
+    return pd.DataFrame(experiments)

@@ -22,7 +22,7 @@ from keras.layers import (
 from keras.metrics import AUC
 from keras.models import Model
 
-from .datasets import en2vec
+from deeplookup.datasets import en2vec
 
 
 def create_cnn(num_classes: int = 2) -> tf.keras.Model:

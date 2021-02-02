@@ -1,7 +1,7 @@
 import numpy as np
 
-from dnsthreat import qnn, vis
-from dnsthreat.env import MalwareEnv
+from deeplookup import qnn, vis
+from deeplookup.env import MalwareEnv
 
 
 ROOT_DIR = ".h5"
