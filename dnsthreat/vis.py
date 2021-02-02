@@ -163,3 +163,55 @@ def annotate_heatmap(
             texts.append(text)
 
     return texts
+
+
+def moving_average(x, w):
+    return np.convolve(x, np.ones(w), "valid") / w
+
+
+def render_moving_average(
+    history, key, label, ylabel, limit=5000, loc="lower right", w=50
+):
+    fig, ax = plt.subplots()
+    val = np.nan_to_num(history[key][:limit])
+
+    ax.plot(val, label=label, linestyle="-", c="black", alpha=0.3)
+    ax.plot(moving_average(val, w), label=f"Скользящее среднее (окно = {w})", c="black")
+
+    ax.set_xlabel("Итерация обучения")
+    ax.set_ylabel(ylabel)
+
+    ax.spines["right"].set_visible(False)
+    ax.spines["top"].set_visible(False)
+    ax.legend(loc=loc)
+
+    return ax
+
+
+def render_actions_histogram(env):
+    nb_actions = len(env.actions)
+    actions = list(map(lambda x: x.value, env.actions))
+    hist = np.histogram(actions, bins=[0, 1, 2, 3, 4, 5])
+
+    fig, ax = plt.subplots()
+    ax.set_ylim(ymax=max(hist[0]) + 500)
+    ax.set_xticks([0, 1, 2, 3, 4])
+    ax.set_xticklabels(
+        ["$a_{dec}$", "$a_{inc}$", "$a_{acc}$", "$a_{blk}$", "$a_{ulk}$"]
+    )
+    ax.set_xlabel("Действия")
+    ax.set_ylabel("Суммарное количество")
+
+    patches = ax.bar([0, 1, 2, 3, 4], hist[0], color="black", alpha=0.3, width=0.5)
+    for rect in patches:
+        height = rect.get_height()
+        ax.annotate(
+            "{}".format(height),
+            xy=(rect.get_x() + rect.get_width() / 2, height),
+            xytext=(0, 3),  # 3 points vertical offset
+            textcoords="offset points",
+            # color="white",
+            ha="center",
+            va="bottom",
+        )
+    return ax
