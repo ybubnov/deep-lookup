@@ -13,7 +13,7 @@ from sklearn.metrics import (
 )
 
 
-def evaluate_class(y_pred: np.array, y_true: np.array, average: str = "binary") -> None:
+def eval_class(y_pred: np.array, y_true: np.array, average: str = "binary") -> None:
     """Print metrics and confusion matrix for the given predictions."""
     print(
         f"accuracy: {accuracy_score(y_true, y_pred):9.4f} - "
@@ -61,13 +61,13 @@ def eval(
     # Convert from categorical to numerical represetnation of the label.
     if binary:
         y_true = np.argmax(y_test, axis=-1)
-        evaluate_class(y_pred, y_true, average=average)
+        eval_class(y_pred, y_true, average=average)
     else:
         y_pred = to_categorical(y_pred)
         for cls in range(y_pred.shape[1]):
             print(f"metrics for class {cls}:")
             y_pr = y_pred[:, cls].astype("int64")
             y_true = y_test[:, cls].astype("int64")
-            evaluate_class(y_pr, y_true)
+            eval_class(y_pr, y_true)
 
     return y_test, y_prob

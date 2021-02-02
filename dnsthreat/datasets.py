@@ -74,7 +74,6 @@ def cast_umudga(
     # will be used as outputs of the model.
     categories = sorted(pd.unique(df["class"].to_numpy().ravel()))
     class_dtype = CategoricalDtype(categories=categories, ordered=True)
-    print(f"categories: {class_dtype.categories}")
 
     df["y_true"] = df["class"].astype(class_dtype).cat.codes
 
@@ -179,5 +178,20 @@ irdtun2_m = Dataset(
     val_path="irdtun/irdtun-m-val.csv",
     test_path="irdtun/irdtun-m-test.csv",
     cast_dataset=cast_irdtun2,
+    binary=False,
+)
+
+umudga_b = Dataset(
+    train_path="umudga/umudga-b-1000-train.csv",
+    val_path="umudga/umudga-b-1000-val.csv",
+    test_path="umudga/umudga-b-1000-test.csv",
+    cast_dataset=cast_umudga,
+)
+
+umudga_m = Dataset(
+    train_path="umudga/umudga-m-1000-train.csv",
+    val_path="umudga/umudga-m-1000-val.csv",
+    test_path="umudga/umudga-m-1000-test.csv",
+    cast_dataset=cast_umudga,
     binary=False,
 )
