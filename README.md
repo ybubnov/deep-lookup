@@ -5,8 +5,8 @@
 2. Bubnov Y., Ivanov N. (2020) Hidden Markov model for malicious hosts detection in a computer network, [_Journal of BSU. Mathematics and Informatics_][BSU, 2020], 3, 73-79.
 
 ## Datasets
-1. Bubnov Y. DNS Tunneling Queries for Binary Classification, [_Mendeley Data_][DTQBC, 2019], v1.
-2. Zago M., Perez. M.G., Perez G.M. UMUDGA - University of Murcia Domain Generation Algorithm Dataset, [_Mendeley Data_][UMUDGA, 2020], v1.
+1. Bubnov Y. (2019) DNS Tunneling Queries for Binary Classification, [_Mendeley Data_][DTQBC, 2019], v1.
+2. Zago M., Perez. M.G., Perez G.M. (2020) UMUDGA - University of Murcia Domain Generation Algorithm Dataset, [_Mendeley Data_][UMUDGA, 2020], v1.
 
 
 [Informatics, 2020]: https://doi.org/10.37661/1816-0301-2020-17-3-78-86
