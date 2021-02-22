@@ -12,4 +12,4 @@
 [Informatics, 2020]: https://doi.org/10.37661/1816-0301-2020-17-3-78-86
 [BSU, 2020]: https://doi.org/10.33581/2520-6508-2020-3-73-79
 [UMUDGA, 2020]: http://dx.doi.org/10.17632/y8ph45msv8.1
-[DTBQC, 2019]: http://dx.doi.org/10.17632/mzn9hvdcxg.1
+[DTQBC, 2019]: http://dx.doi.org/10.17632/mzn9hvdcxg.1
