@@ -1,4 +1,4 @@
-from typing import Callable, Tuple
+from typing import Callable, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -13,6 +13,9 @@ from sklearn.metrics import (
 )
 
 from deeplookup import datasets
+
+
+_dataset_cache = {}
 
 
 def eval_class(y_pred: np.array, y_true: np.array, average: str = "binary") -> None:
@@ -45,14 +48,21 @@ def eval(
     average: str = "binary",
     root_dir: str = "",
     encode: bool = True,
+    limit: Optional[int] = None,
 ) -> Tuple[np.array, np.array]:
     """Evaluate the model on the test dataset.
 
     Method prints the basic metrics of the model and returns true and predicted
     results of the test data classification.
     """
-    test_df = pd.read_csv(f"{root_dir}/{test_path}")
-    x_test, y_test = cast_dataset(test_df, binary=binary, encode=encode)
+    path = f"{root_dir}/{test_path}"
+    if path not in _dataset_cache:
+        _dataset_cache[path] = pd.read_csv(path)
+
+    dataset_df = _dataset_cache[path]
+    dataset_df = dataset_df.iloc[:limit] if limit else dataset_df
+
+    x_test, y_test = cast_dataset(dataset_df, binary=binary, encode=encode)
 
     y_prob = model.predict(x_test)
     y_pred = np.argmax(y_prob, axis=-1) if prepare_predict else y_prob
@@ -76,7 +86,7 @@ def eval(
 
 
 def ts_score(
-        model, window_prob: float = 0.5, to_categorical: bool = True
+    model, window_prob: float = 0.5, to_categorical: bool = True
 ) -> pd.DataFrame:
     experiments = []
 

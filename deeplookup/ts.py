@@ -1,6 +1,6 @@
+import math
 from dataclasses import dataclass, field
 from typing import NamedTuple
-import math
 
 import numpy as np
 from numpy.linalg import norm
@@ -100,3 +100,6 @@ class Rsamp:
 
         y_pred = [n.klass for n in c0[1:-1]]
         return y_pred
+
+    def predict_all(self, xx):
+        return [self.predict(x) for x in xx]

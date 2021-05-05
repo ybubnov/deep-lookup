@@ -1,5 +1,6 @@
 import pathlib
 from functools import partial
+from typing import Callable
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -68,7 +69,7 @@ class_names = [
 ]
 
 
-for factory, h5_path in B_MODELS:
+def fit(factory: Callable, h5_path: str) -> Callable:
     model_name = pathlib.Path(h5_path)
     model_name = model_name.name[: -len(model_name.suffix)]
 
@@ -80,26 +81,10 @@ for factory, h5_path in B_MODELS:
         **datasets.umudga_b.train,
     )
 
-    y_true, y_pred = metrics.eval(model, root_dir=ROOT_DIR, **datasets.umudga_b.test)
-    print("-" * 80)
-
-    ax0 = vis.render_roc(y_true, y_pred, klass=0, label="Безопасный DNS")
-    ax0.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-0.png", **vis.SAVE_KW)
-
-    ax1 = vis.render_roc(y_true, y_pred, klass=1, label="Небезопасный DNS")
-    ax1.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-1.png", **vis.SAVE_KW)
-
-    if history:
-        ax_hist, acc_hist = vis.render_history(history)
-        ax_hist.figure.savefig(
-            f"{ROOT_DIR}/images/{model_name}-hist.png", **vis.SAVE_KW
-        )
-        acc_hist.figure.savefig(
-            f"{ROOT_DIR}/images/{model_name}-acc.png", **vis.SAVE_KW
-        )
+    return partial(metrics.eval, model, root_dir=ROOT_DIR, **datasets.umudga_b.test)
 
 
-for factory, h5_path in M_MODELS:
+def fit_multilabel(factory: Callable, h5_path: str) -> Callable:
     model_name = pathlib.Path(h5_path)
     model_name = model_name.name[: -len(model_name.suffix)]
     model_factory = partial(factory, num_classes=len(class_names))
@@ -111,22 +96,47 @@ for factory, h5_path in M_MODELS:
         root_dir=ROOT_DIR,
         **datasets.umudga_m.train,
     )
-    y_true, y_pred = metrics.eval(
-        model,
-        root_dir=ROOT_DIR,
-        **datasets.umudga_m.test,
-    )
+    return partial(metrics.eval, model, root_dir=ROOT_DIR, **datasets.umudga_m.test)
 
-    y_true, y_pred = np.argmax(y_true, axis=-1), np.argmax(y_pred, axis=-1)
 
-    metrics.eval_class(y_pred, y_true, average="micro")
-    metrics.eval_class(y_pred, y_true, average="macro")
-    print("-" * 80)
+def main():
+    for factory, h5_path in B_MODELS:
+        y_true, y_pred = fit(factory, h5_path)()
+        print("-" * 80)
 
-    cm = metrics.confusion_matrix(y_true, y_pred)
+        ax0 = vis.render_roc(y_true, y_pred, klass=0, label="Безопасный DNS")
+        ax0.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-0.png", **vis.SAVE_KW)
 
-    heatmap_fig, ax = plt.subplots(figsize=(20, 20))
-    hm = vis.heatmap(cm, class_names, class_names, ax=ax)
-    vis.annotate_heatmap(hm, valfmt="{x}")
+        ax1 = vis.render_roc(y_true, y_pred, klass=1, label="Небезопасный DNS")
+        ax1.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-1.png", **vis.SAVE_KW)
 
-    heatmap_fig.savefig(f"{ROOT_DIR}/images/{model_name}-heatmap.png", **vis.SAVE_KW)
+        if history:
+            ax_hist, acc_hist = vis.render_history(history)
+            ax_hist.figure.savefig(
+                f"{ROOT_DIR}/images/{model_name}-hist.png", **vis.SAVE_KW
+            )
+            acc_hist.figure.savefig(
+                f"{ROOT_DIR}/images/{model_name}-acc.png", **vis.SAVE_KW
+            )
+
+    for factory, h5_path in M_MODELS:
+        y_true, y_pred = fit_multilabel(factory, h5_path)()
+        y_true, y_pred = np.argmax(y_true, axis=-1), np.argmax(y_pred, axis=-1)
+
+        metrics.eval_class(y_pred, y_true, average="micro")
+        metrics.eval_class(y_pred, y_true, average="macro")
+        print("-" * 80)
+
+        cm = metrics.confusion_matrix(y_true, y_pred)
+
+        heatmap_fig, ax = plt.subplots(figsize=(20, 20))
+        hm = vis.heatmap(cm, class_names, class_names, ax=ax)
+        vis.annotate_heatmap(hm, valfmt="{x}")
+
+        heatmap_fig.savefig(
+            f"{ROOT_DIR}/images/{model_name}-heatmap.png", **vis.SAVE_KW
+        )
+
+
+if __name__ == "__main__":
+    main()
