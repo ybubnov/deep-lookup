@@ -92,7 +92,7 @@ def fit_multilabel(factory: Callable, h5_path: str) -> Callable:
     model, history = nn.train(
         model_factory=model_factory,
         model_h5_path=h5_path,
-        train_epochs=1,
+        train_epochs=20,
         root_dir=ROOT_DIR,
         **datasets.umudga_m.train,
     )

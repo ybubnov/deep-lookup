@@ -37,7 +37,7 @@ class MalwareEnv(gym.Env):
         4      Forget node
 
     Reward:
-        Reward of -1 is awarded for accessing detector.
+        Reward of -0.1 is awarded for accessing detector.
         Reward of -0.2 is awarded for decreasing attention.
         Reward of -0.8 is awarded for increasing attention.
         Reward of 1 is awarded for isolation of infected node.
@@ -138,7 +138,7 @@ class MalwareEnv(gym.Env):
         if action == Action.increase_attention:
             return -0.8
         if action == Action.access_detector:
-            return -1
+            return -0.1
         if action == Action.isolate_node:
             return 1 * (health * 2 - 1)
         if action == Action.forget_node:
