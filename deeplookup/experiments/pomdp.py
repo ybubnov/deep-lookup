@@ -56,5 +56,5 @@ def main():
         p.figure.savefig(f"{ROOT_DIR}/images/{name}-hist.png", **vis.SAVE_KW)
 
 
-def __name__ == "__main__":
+if __name__ == "__main__":
     main()
