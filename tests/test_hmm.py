@@ -5,20 +5,10 @@ from deeplookup.experiments import hmm
 
 
 @pytest.mark.parametrize(
-    "predict, to_categorical",
-    [
-        (hmm.rsamp.predict_all, False),
-        (hmm.bossvs.predict, True),
-        (hmm.saxvsm.predict, True),
-    ],
+    "predict",
+    [hmm.rsamp.predict_proba, hmm.bossvs.predict, hmm.saxvsm.predict],
     ids=["rsamp", "bossvs", "saxvsm"],
 )
-def test_benchmark(predict, to_categorical, benchmark):
-    x_test, _ = datasets.load_ts(200, to_categorical=to_categorical)
-
-    benchmark.pedantic(
-        predict,
-        args=(x_test,),
-        iterations=10,
-        rounds=100,
-    )
+def test_benchmark(predict, benchmark):
+    x_test, _ = datasets.load_ts(200, to_categorical=True)
+    benchmark.pedantic(predict, args=(x_test,), iterations=10, rounds=100)
