@@ -11,4 +11,4 @@ from deeplookup.experiments import hmm
 )
 def test_benchmark(predict, benchmark):
     x_test, _ = datasets.load_ts(200, to_categorical=True)
-    benchmark.pedantic(predict, args=(x_test[0],), iterations=10, rounds=100)
+    benchmark.pedantic(predict, args=(x_test[:1],), iterations=10, rounds=100)
