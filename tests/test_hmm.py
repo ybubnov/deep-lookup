@@ -19,6 +19,6 @@ def test_benchmark(predict, to_categorical, benchmark):
     benchmark.pedantic(
         predict,
         args=(x_test,),
-        iterations=100,
-        rounds=1,
+        iterations=10,
+        rounds=100,
     )
