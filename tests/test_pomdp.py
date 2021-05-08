@@ -8,8 +8,8 @@ from deeplookup.experiments import pomdp
 
 @pytest.mark.parametrize(
     "agent",
-    [pomdp.dqn, pomdp.ddqn, pomdp.ddpg],
-    ids=["dqn", "ddqn", "ddpg"],
+    [pomdp.dqn, pomdp.ddpg, pomdp.ddqn],
+    ids=["dqn", "ddpg", "ddqn"],
 )
 def test_benchmark(agent, benchmark):
     env = MalwareEnv(log=False)
@@ -21,7 +21,8 @@ def test_benchmark(agent, benchmark):
         visualize=False,
         start_step_policy=env.start_step_policy,
         nb_max_start_steps=0,
-        nb_max_episode_steps=0,
+        nb_max_episode_steps=20,
+        verbose=0,
     )
 
-    benchmark.pedantic(function, iterations=10, rounds=2)
+    benchmark.pedantic(function, iterations=10, rounds=100)
