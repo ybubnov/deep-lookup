@@ -19,7 +19,7 @@ def model_ids(models):
 )
 def test_binary_benchmark(train, evaluate, factory, path, kw, layers, benchmark):
     function = tunneling.fit(train, evaluate, factory, path, kw, layers)
-    benchmark.pedantic(function, kwargs=kwargs, iterations=100, rounds=100)
+    benchmark.pedantic(function, kwargs=kwargs, iterations=10, rounds=100)
 
 
 @pytest.mark.parametrize(
@@ -29,4 +29,4 @@ def test_binary_benchmark(train, evaluate, factory, path, kw, layers, benchmark)
 )
 def test_multilabel_benchmark(train, evaluate, factory, path, kw, benchmark):
     function = tunneling.fit_multilabel(train, evaluate, factory, path, kw)
-    benchmark.pedantic(function, kwargs=kwargs, iterations=100, rounds=100)
+    benchmark.pedantic(function, kwargs=kwargs, iterations=10, rounds=100)

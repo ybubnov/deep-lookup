@@ -1,5 +1,5 @@
-csv-datasets/images
-csv-datasets/model
-.h5/*
+csv-datasets/images/
+csv-datasets/model/
+.h5/
 *.h5
-*.h5f.log
+*.log
