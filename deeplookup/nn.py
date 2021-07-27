@@ -1,6 +1,6 @@
 import pathlib
 import pickle
-from typing import Callable
+from typing import Callable, Dict, Optional
 
 import pandas as pd
 import tensorflow as tf
@@ -23,6 +23,30 @@ from keras.metrics import AUC
 from keras.models import Model
 
 from deeplookup.datasets import en2vec
+
+
+def name_from_path(path: str) -> str:
+    """Generate a model name from the H5 path."""
+    name = pathlib.Path(path)
+    return name.name[: -len(name.suffix)]
+
+
+def history_from_path(
+    model_h5_path: str, root_dir: str = "", missing_ok: bool = True
+) -> Optional[Dict]:
+    """Loads history from the given model path.
+
+    Raises ValueError, when log is not presented. Error is supressed, when `mising_ok`
+    is set to True.
+    """
+    root_dir = f"{root_dir}/" if root_dir else ""
+    model_log_path = pathlib.Path(f"{root_dir}{model_h5_path}.log")
+
+    if model_log_path.exists():
+        with model_log_path.open(mode="rb") as f:
+            return pickle.load(f)
+    if not missing_ok:
+        raise ValueError(f"No history found at '{model_log_path}'")
 
 
 def create_cnn(num_classes: int = 2) -> tf.keras.Model:
@@ -156,9 +180,7 @@ def create_ffnn(num_classes: int = 2):
     model.add(Dense(num_classes, activation="softmax"))
 
     model.compile(
-        loss="categorical_crossentropy",
-        optimizer="nadam",
-        metrics=["accuracy", AUC()],
+        loss="categorical_crossentropy", optimizer="nadam", metrics=["accuracy", AUC()],
     )
     return model
 
@@ -186,13 +208,7 @@ def train(
     if not force and model_h5_path.exists():
         print(f"loading existing model from {model_h5_path}")
 
-        history = dict()
-        if model_log_path.exists():
-            with model_log_path.open(mode="rb") as f:
-                history = pickle.load(f)
-        else:
-            raise ValueError(f"No history found at '{model_log_path}'")
-
+        history = history_from_path(model_h5_path, missing_ok=False)
         return tf.keras.models.load_model(str(model_h5_path)), history
 
     train_df = pd.read_csv(f"{root_dir}/{train_path}")

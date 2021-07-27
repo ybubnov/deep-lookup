@@ -7,9 +7,7 @@ from deeplookup.experiments import pomdp
 
 
 @pytest.mark.parametrize(
-    "agent",
-    [pomdp.dqn, pomdp.ddpg, pomdp.ddqn],
-    ids=["dqn", "ddpg", "ddqn"],
+    "agent", [pomdp.dqn, pomdp.ddpg, pomdp.ddqn], ids=["dqn", "ddpg", "ddqn"],
 )
 def test_benchmark(agent, benchmark):
     env = MalwareEnv(log=False)

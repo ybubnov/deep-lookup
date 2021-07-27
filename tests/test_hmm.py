@@ -1,6 +1,6 @@
 import pytest
 
-from deeplookup import datasets, metrics
+from deeplookup import datasets
 from deeplookup.experiments import hmm
 
 

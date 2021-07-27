@@ -44,8 +44,8 @@ class Rsamp:
 
         for i in range(records):
             u = _Node
-            v = N("a", x[i], klass=0, ts=i+1)
-            w = N("b", x[i], klass=1, ts=i+1)
+            v = N("a", x[i], klass=0, ts=i + 1)
+            w = N("b", x[i], klass=1, ts=i + 1)
             _Node, new_prob = self.max_prob(u, v, w)
             y_pred[i] = _Node.klass
             joint_prob *= new_prob

@@ -1,7 +1,6 @@
 import pathlib
 import pickle
 
-import tensorflow as tf
 from keras.callbacks import Callback
 from keras.layers import Activation, Concatenate, Dense, Dropout, Flatten, Input
 from keras.models import Model, Sequential, load_model

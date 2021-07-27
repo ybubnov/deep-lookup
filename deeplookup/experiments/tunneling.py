@@ -1,4 +1,3 @@
-import pathlib
 from functools import partial
 from typing import Callable
 
@@ -94,21 +93,15 @@ M_MODELS = [
 CLASS_NAMES = ["normal", "dns2tcp", "dnscapy", "iodine", "tuns"]
 
 
-def fit(train, evaluate, factory, h5_path, kw, layers):
-    model_name = pathlib.Path(h5_path)
-    model_name = model_name.name[: -len(model_name.suffix)]
-
+def fit(train, evaluate, factory, h5_path, kw, layers) -> Callable:
     kw["root_dir"] = ROOT_DIR
-    model, history = train(model_factory=factory, model_h5_path=h5_path, **kw)
+    model, _ = train(model_factory=factory, model_h5_path=h5_path, **kw)
     return partial(evaluate, model, root_dir=ROOT_DIR)
 
 
-def fit_multilabel(train, evaluate, factory, h5_path, kw):
-    model_name = pathlib.Path(h5_path)
-    model_name = model_name.name[: -len(model_name.suffix)]
-
+def fit_multilabel(train, evaluate, factory, h5_path, kw) -> Callable:
     kw["root_dir"] = ROOT_DIR
-    model, history = train(model_factory=factory, model_h5_path=h5_path, **kw)
+    model, _ = train(model_factory=factory, model_h5_path=h5_path, **kw)
     return partial(evaluate, model, root_dir=ROOT_DIR)
 
 
@@ -116,14 +109,17 @@ def main():
     for train, evaluate, factory, h5_path, kw, layers in B_MODELS:
         y_true, y_pred = fit(train, evaluate, factory, h5_path, kw, layers)()
 
+        model_name = nn.name_from_path(h5_path)
+        model_history = nn.history_from_path(h5_path, ROOT_DIR, missing_ok=True)
+
         ax0 = vis.render_roc(y_true, y_pred, klass=0, label="Безопасный DNS")
         ax0.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-0.png", **vis.SAVE_KW)
 
         ax1 = vis.render_roc(y_true, y_pred, klass=1, label="Небезопасный DNS")
         ax1.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-1.png", **vis.SAVE_KW)
 
-        if history:
-            ax_hist, acc_hist = vis.render_history(history)
+        if model_history:
+            ax_hist, acc_hist = vis.render_history(model_history)
             ax_hist.figure.savefig(
                 f"{ROOT_DIR}/images/{model_name}-hist.png", **vis.SAVE_KW
             )
@@ -137,9 +133,12 @@ def main():
 
         cm = confusion_matrix(np.argmax(y_true, axis=-1), np.argmax(y_pred, axis=-1))
 
+        model_name = nn.name_from_path(h5_path)
         heatmap_fig, ax = plt.subplots()
+
         hm = vis.heatmap(cm, CLASS_NAMES, CLASS_NAMES, ax=ax)
         vis.annotate_heatmap(hm, valfmt="{x}")
+
         heatmap_fig.savefig(
             f"{ROOT_DIR}/images/{model_name}-heatmap.png", **vis.SAVE_KW
         )

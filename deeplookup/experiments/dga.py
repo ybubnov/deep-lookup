@@ -1,4 +1,3 @@
-import pathlib
 from functools import partial
 from typing import Callable
 
@@ -70,27 +69,19 @@ class_names = [
 
 
 def fit(factory: Callable, h5_path: str) -> Callable:
-    model_name = pathlib.Path(h5_path)
-    model_name = model_name.name[: -len(model_name.suffix)]
-
-    model, history = nn.train(
+    model, _ = nn.train(
         model_factory=factory,
         model_h5_path=h5_path,
         train_epochs=20,
         root_dir=ROOT_DIR,
         **datasets.umudga_b.train,
     )
-
     return partial(metrics.eval, model, root_dir=ROOT_DIR, **datasets.umudga_b.test)
 
 
 def fit_multilabel(factory: Callable, h5_path: str) -> Callable:
-    model_name = pathlib.Path(h5_path)
-    model_name = model_name.name[: -len(model_name.suffix)]
-    model_factory = partial(factory, num_classes=len(class_names))
-
-    model, history = nn.train(
-        model_factory=model_factory,
+    model, _ = nn.train(
+        model_factory=partial(factory, num_classes=len(class_names)),
         model_h5_path=h5_path,
         train_epochs=20,
         root_dir=ROOT_DIR,
@@ -104,14 +95,17 @@ def main():
         y_true, y_pred = fit(factory, h5_path)()
         print("-" * 80)
 
+        model_name = nn.name_from_path(h5_path)
+        model_history = nn.history_from_path(h5_path, ROOT_DIR, missing_ok=True)
+
         ax0 = vis.render_roc(y_true, y_pred, klass=0, label="Безопасный DNS")
         ax0.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-0.png", **vis.SAVE_KW)
 
         ax1 = vis.render_roc(y_true, y_pred, klass=1, label="Небезопасный DNS")
         ax1.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-1.png", **vis.SAVE_KW)
 
-        if history:
-            ax_hist, acc_hist = vis.render_history(history)
+        if model_history:
+            ax_hist, acc_hist = vis.render_history(model_history)
             ax_hist.figure.savefig(
                 f"{ROOT_DIR}/images/{model_name}-hist.png", **vis.SAVE_KW
             )
@@ -133,6 +127,7 @@ def main():
         hm = vis.heatmap(cm, class_names, class_names, ax=ax)
         vis.annotate_heatmap(hm, valfmt="{x}")
 
+        model_name = nn.name_from_path(h5_path)
         heatmap_fig.savefig(
             f"{ROOT_DIR}/images/{model_name}-heatmap.png", **vis.SAVE_KW
         )
