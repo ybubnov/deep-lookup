@@ -83,7 +83,7 @@ def cast_umudga(
     return np.asarray(x_true, dtype="int64"), np.asarray(y_true)
 
 
-def cast_irdtun(df, binary: bool = False, pos_class: int = 0, encode: bool = True):
+def cast_dtqbc(df, binary: bool = False, pos_class: int = 0, encode: bool = True):
     """Prepare IRDTUN dataset for training a model.
 
     The dataset contains domain names and other DNS-packet attributes from
@@ -99,7 +99,7 @@ def cast_irdtun(df, binary: bool = False, pos_class: int = 0, encode: bool = Tru
     return x_true, y_true
 
 
-def cast_irdtun2(
+def cast_dtqbc2(
     df: pd.DataFrame, binary: bool = False, pos_class: int = 0, encode=True
 ) -> pd.DataFrame:
     """Prepare IRDTUN-2 dataset for training a model.
@@ -198,33 +198,33 @@ class Dataset:
         }
 
 
-irdtun_b = Dataset(
-    train_path="irdtun/irdtun-b-train.csv",
-    val_path="irdtun/irdtun-b-val.csv",
-    test_path="irdtun/irdtun-b-test.csv",
-    cast_dataset=cast_irdtun,
+dtqbc_b = Dataset(
+    train_path="dtqbc/dtqbc-b-train.csv",
+    val_path="dtqbc/dtqbc-b-val.csv",
+    test_path="dtqbc/dtqbc-b-test.csv",
+    cast_dataset=cast_dtqbc,
 )
 
-irdtun2_b = Dataset(
-    train_path="irdtun/irdtun-b-train.csv",
-    val_path="irdtun/irdtun-b-val.csv",
-    test_path="irdtun/irdtun-b-test.csv",
-    cast_dataset=cast_irdtun2,
+dtqbc2_b = Dataset(
+    train_path="dtqbc/dtqbc-b-train.csv",
+    val_path="dtqbc/dtqbc-b-val.csv",
+    test_path="dtqbc/dtqbc-b-test.csv",
+    cast_dataset=cast_dtqbc2,
 )
 
-irdtun_m = Dataset(
-    train_path="irdtun/irdtun-m-train.csv",
-    val_path="irdtun/irdtun-m-val.csv",
-    test_path="irdtun/irdtun-m-test.csv",
-    cast_dataset=cast_irdtun,
+dtqbc_m = Dataset(
+    train_path="dtqbc/dtqbc-m-train.csv",
+    val_path="dtqbc/dtqbc-m-val.csv",
+    test_path="dtqbc/dtqbc-m-test.csv",
+    cast_dataset=cast_dtqbc,
     binary=False,
 )
 
-irdtun2_m = Dataset(
-    train_path="irdtun/irdtun-m-train.csv",
-    val_path="irdtun/irdtun-m-val.csv",
-    test_path="irdtun/irdtun-m-test.csv",
-    cast_dataset=cast_irdtun2,
+dtqbc2_m = Dataset(
+    train_path="dtqbc/dtqbc-m-train.csv",
+    val_path="dtqbc/dtqbc-m-val.csv",
+    test_path="dtqbc/dtqbc-m-test.csv",
+    cast_dataset=cast_dtqbc2,
     binary=False,
 )
 
