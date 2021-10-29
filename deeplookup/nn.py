@@ -21,6 +21,7 @@ from keras.layers import (
 )
 from keras.metrics import AUC
 from keras.models import Model
+from wandb.keras import WandbCallback
 
 from deeplookup.datasets import en2vec
 
@@ -231,7 +232,7 @@ def train(
         validation_data=(x_val, y_val),
         epochs=train_epochs,
         batch_size=train_batch_size,
-        callbacks=[early_stopping],
+        callbacks=[early_stopping, WandbCallback()],
     )
 
     # Save the trained model and the traing history to plot the results.

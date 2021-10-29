@@ -1,11 +1,11 @@
+from datetime import date
 from functools import partial
 from typing import Callable
 
-import matplotlib.pyplot as plt
 import numpy as np
 
-from deeplookup import bigram, datasets, metrics, nn, svm, vis
-from deeplookup.metrics import confusion_matrix
+import wandb
+from deeplookup import bigram, datasets, metrics, nn, svm
 
 
 ROOT_DIR = "csv-datasets"
@@ -53,7 +53,7 @@ B_MODELS = [
         partial(metrics.eval, **datasets.dtqbc_b.test),
         nn.create_ffnn,
         "model/b-tun-ffnn.h5",
-        {"train_epochs": 300},
+        {"train_epochs": 300, "force": True},
         [],
     ),
 ]
@@ -64,28 +64,28 @@ M_MODELS = [
         partial(metrics.eval, **datasets.dtqbc_m.test),
         svm.create_svm,
         "model/m-tun-svm.h5",
-        {"train_epochs": 10000},
+        {"train_epochs": 10000, "force": True},
     ),
     (
         partial(nn.train, **datasets.dtqbc2_m.train),
         partial(metrics.eval, **datasets.dtqbc2_m.test),
         partial(nn.create_cnn, num_classes=5),
         "model/m-tun-cnn.h5",
-        {"train_epochs": 20},
+        {"train_epochs": 20, "force": True},
     ),
     (
         partial(nn.train, **datasets.dtqbc2_m.train),
         partial(metrics.eval, **datasets.dtqbc2_m.test),
         partial(nn.create_rnn, num_classes=5),
         "model/m-tun-rnn.h5",
-        {"train_epochs": 20},
+        {"train_epochs": 20, "force": True},
     ),
     (
         partial(nn.train, **datasets.dtqbc_m.train),
         partial(metrics.eval, **datasets.dtqbc_m.test),
         partial(nn.create_ffnn, num_classes=5),
         "model/m-tun-ffnn.h5",
-        {"train_epochs": 300},
+        {"train_epochs": 300, "force": True},
     ),
 ]
 
@@ -106,42 +106,47 @@ def fit_multilabel(train, evaluate, factory, h5_path, kw) -> Callable:
 
 
 def main():
+    today = date.today()
+
     for train, evaluate, factory, h5_path, kw, layers in B_MODELS:
-        y_true, y_pred = fit(train, evaluate, factory, h5_path, kw, layers)()
-
         model_name = nn.name_from_path(h5_path)
-        model_history = nn.history_from_path(h5_path, ROOT_DIR, missing_ok=True)
+        model_run = wandb.init(
+            project="deep-lookup",
+            group="tunneling-detection",
+            name=f"{today}-{model_name}",
+            tags=["tunneling", "binary"],
+            config=dict(model=model_name, **kw),
+            reinit=True,
+        )
 
-        ax0 = vis.render_roc(y_true, y_pred, klass=0, label="Безопасный DNS")
-        ax0.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-0.png", **vis.SAVE_KW)
-
-        ax1 = vis.render_roc(y_true, y_pred, klass=1, label="Небезопасный DNS")
-        ax1.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-1.png", **vis.SAVE_KW)
-
-        if model_history:
-            ax_hist, acc_hist = vis.render_history(model_history)
-            ax_hist.figure.savefig(
-                f"{ROOT_DIR}/images/{model_name}-hist.png", **vis.SAVE_KW
-            )
-            acc_hist.figure.savefig(
-                f"{ROOT_DIR}/images/{model_name}-acc.png", **vis.SAVE_KW
-            )
+        with model_run:
+            fit(train, evaluate, factory, h5_path, kw, layers)()
 
     for train, evaluate, factory, h5_path, kw in M_MODELS:
-        y_true, y_pred = fit_multilabel(train, evaluate, factory, h5_path, kw)()
-        print("-" * 80)
-
-        cm = confusion_matrix(np.argmax(y_true, axis=-1), np.argmax(y_pred, axis=-1))
-
         model_name = nn.name_from_path(h5_path)
-        heatmap_fig, ax = plt.subplots()
 
-        hm = vis.heatmap(cm, CLASS_NAMES, CLASS_NAMES, ax=ax)
-        vis.annotate_heatmap(hm, valfmt="{x}")
-
-        heatmap_fig.savefig(
-            f"{ROOT_DIR}/images/{model_name}-heatmap.png", **vis.SAVE_KW
+        model_run = wandb.init(
+            project="deep-lookup",
+            group="tunneling-categorization",
+            name=f"{today}-{model_name}",
+            tags=["tunneling", "multilabel"],
+            config=dict(model=model_name, **kw),
+            reinit=True,
         )
+
+        with model_run:
+            y_true, y_pred = fit_multilabel(train, evaluate, factory, h5_path, kw)()
+
+            wandb.log(
+                {
+                    "conf_mat": wandb.plot.confusion_matrix(
+                        probs=None,
+                        y_true=np.argmax(y_true, axis=-1),
+                        preds=np.argmax(y_pred, axis=-1),
+                        class_names=CLASS_NAMES,
+                    ),
+                },
+            )
 
 
 if __name__ == "__main__":
