@@ -180,7 +180,9 @@ def create_ffnn(num_classes: int = 2):
     model.add(Dense(num_classes, activation="softmax"))
 
     model.compile(
-        loss="categorical_crossentropy", optimizer="nadam", metrics=["accuracy", AUC()],
+        loss="categorical_crossentropy",
+        optimizer="nadam",
+        metrics=["accuracy", AUC()],
     )
     return model
 
