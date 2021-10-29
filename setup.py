@@ -42,5 +42,6 @@ setuptools.setup(
         "tensorflow>=2.4.1",
         "pyts>=0.11.0",
         "keras-rl2>=1.0.4",
+        "wandb",
     ],
 )
