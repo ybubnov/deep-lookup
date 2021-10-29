@@ -28,7 +28,13 @@ def render_roc(
     label = "%s (AUC = %05.4f)" % (label, roc_auc)
 
     ax.plot(
-        fpr, tpr, c="black", label=label, linestyle="-", marker=".", markersize=4,
+        fpr,
+        tpr,
+        c="black",
+        label=label,
+        linestyle="-",
+        marker=".",
+        markersize=4,
     )
 
     ax.plot([0, 1], [0, 1], linestyle="--", lw=1, color="gray", label="Гадание")
@@ -51,7 +57,10 @@ def render_history(history: Dict[str, np.array]):
     """
     _, ax = plt.subplots()
     ax.plot(
-        history["loss"][1:], linestyle="--", label="Ошибка обучения", c="black",
+        history["loss"][1:],
+        linestyle="--",
+        label="Ошибка обучения",
+        c="black",
     )
     ax.plot(history["val_loss"][1:], linestyle="-", label="Ошибка валидации", c="black")
 
@@ -65,7 +74,10 @@ def render_history(history: Dict[str, np.array]):
 
     _, acc = plt.subplots()
     acc.plot(
-        history["accuracy"][1:], linestyle="--", label="Точность обучения", c="black",
+        history["accuracy"][1:],
+        linestyle="--",
+        label="Точность обучения",
+        c="black",
     )
     acc.plot(
         history["val_accuracy"][1:],

@@ -3,3 +3,11 @@ csv-datasets/model/
 .h5/
 *.h5
 *.log
+
+# Python build artifacts.
+build/
+dist/
+*.egg-info/
+
+# MacOS artifacts
+.DS_Store
