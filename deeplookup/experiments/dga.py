@@ -1,10 +1,11 @@
+from datetime import date
 from functools import partial
 from typing import Callable
 
-import matplotlib.pyplot as plt
 import numpy as np
 
-from deeplookup import datasets, metrics, nn, vis
+import wandb
+from deeplookup import datasets, metrics, nn
 
 
 ROOT_DIR = "csv-datasets"
@@ -14,7 +15,7 @@ B_MODELS = [
     (nn.create_woodbridge_rnn, "model/b-dga-woodbridge.h5"),
     (nn.create_vosoughi_rcnn, "model/b-dga-vosoughi.h5"),
     (partial(nn.create_rcnn, bidir=False), "model/b-dga-highman.h5"),
-    (partial(nn.create_rcnn, bidir=True), "model/b-dga-proposed.h5"),
+    (partial(nn.create_rcnn, bidir=True), "model/b-dga-ybubnov.h5"),
 ]
 
 M_MODELS = [
@@ -22,7 +23,7 @@ M_MODELS = [
     (nn.create_woodbridge_rnn, "model/m-dga-woodbridge.h5"),
     (nn.create_vosoughi_rcnn, "model/m-dga-vosoughi.h5"),
     (partial(nn.create_rcnn, bidir=False), "model/m-dga-highman.h5"),
-    (partial(nn.create_rcnn, bidir=True), "model/m-dga-proposed.h5"),
+    (partial(nn.create_rcnn, bidir=True), "model/m-dga-ybubnov.h5"),
 ]
 
 
@@ -91,46 +92,45 @@ def fit_multilabel(factory: Callable, h5_path: str) -> Callable:
 
 
 def main():
+    today = date.today()
+
     for factory, h5_path in B_MODELS:
-        y_true, y_pred = fit(factory, h5_path)()
-        print("-" * 80)
-
         model_name = nn.name_from_path(h5_path)
-        model_history = nn.history_from_path(h5_path, ROOT_DIR, missing_ok=True)
+        model_run = wandb.init(
+            project="deep-lookup",
+            group="dga-detection",
+            name=f"{today}-{model_name}",
+            tags=["dga", "binary"],
+            config=dict(model=model_name),
+            reinit=True,
+        )
 
-        ax0 = vis.render_roc(y_true, y_pred, klass=0, label="Безопасный DNS")
-        ax0.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-0.png", **vis.SAVE_KW)
-
-        ax1 = vis.render_roc(y_true, y_pred, klass=1, label="Небезопасный DNS")
-        ax1.figure.savefig(f"{ROOT_DIR}/images/{model_name}-roc-1.png", **vis.SAVE_KW)
-
-        if model_history:
-            ax_hist, acc_hist = vis.render_history(model_history)
-            ax_hist.figure.savefig(
-                f"{ROOT_DIR}/images/{model_name}-hist.png", **vis.SAVE_KW
-            )
-            acc_hist.figure.savefig(
-                f"{ROOT_DIR}/images/{model_name}-acc.png", **vis.SAVE_KW
-            )
+        with model_run:
+            fit(factory, h5_path)()
 
     for factory, h5_path in M_MODELS:
-        y_true, y_pred = fit_multilabel(factory, h5_path)()
-        y_true, y_pred = np.argmax(y_true, axis=-1), np.argmax(y_pred, axis=-1)
-
-        metrics.eval_class(y_pred, y_true, average="micro")
-        metrics.eval_class(y_pred, y_true, average="macro")
-        print("-" * 80)
-
-        cm = metrics.confusion_matrix(y_true, y_pred)
-
-        heatmap_fig, ax = plt.subplots(figsize=(20, 20))
-        hm = vis.heatmap(cm, class_names, class_names, ax=ax)
-        vis.annotate_heatmap(hm, valfmt="{x}")
-
         model_name = nn.name_from_path(h5_path)
-        heatmap_fig.savefig(
-            f"{ROOT_DIR}/images/{model_name}-heatmap.png", **vis.SAVE_KW
+        model_run = wandb.init(
+            project="deep-lookup",
+            group="dga-categorization",
+            name=f"{today}-{model_name}",
+            tags=["dga", "multilabel"],
+            config=dict(model=model_name),
+            reinit=True,
         )
+
+        with model_run:
+            y_true, y_pred = fit_multilabel(factory, h5_path)()
+            y_true, y_pred = np.argmax(y_true, axis=-1), np.argmax(y_pred, axis=-1)
+
+            conf_mat = wandb.plot.confusion_matrix(
+                probs=None,
+                y_true=y_true,
+                preds=y_pred,
+                class_names=class_names,
+            )
+
+            wandb.log({"conf_mat": conf_mat})
 
 
 if __name__ == "__main__":

@@ -136,17 +136,16 @@ def main():
 
         with model_run:
             y_true, y_pred = fit_multilabel(train, evaluate, factory, h5_path, kw)()
+            y_true, y_pred = np.argmax(y_true, axis=-1), np.argmax(y_pred, axis=-1)
 
-            wandb.log(
-                {
-                    "conf_mat": wandb.plot.confusion_matrix(
-                        probs=None,
-                        y_true=np.argmax(y_true, axis=-1),
-                        preds=np.argmax(y_pred, axis=-1),
-                        class_names=CLASS_NAMES,
-                    ),
-                },
+            conf_mat = wandb.plot.confusion_matrix(
+                probs=None,
+                y_true=y_true,
+                preds=y_pred,
+                class_names=CLASS_NAMES,
             )
+
+            wandb.log({"conf_mat": conf_mat})
 
 
 if __name__ == "__main__":
