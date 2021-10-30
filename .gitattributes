@@ -13,3 +13,4 @@ csv-datasets/umudga/umudga-1000-train.csv filter=lfs diff=lfs merge=lfs -text
 csv-datasets/umudga/umudga-1000-validate.csv filter=lfs diff=lfs merge=lfs -text
 csv-datasets/umudga/umudga-b-1000-test.csv filter=lfs diff=lfs merge=lfs -text
 csv-datasets/umudga/umudga-m-1000-val.csv filter=lfs diff=lfs merge=lfs -text
+deeplookup/weights/b-dga-ybubnov.h5 filter=lfs diff=lfs merge=lfs -text
