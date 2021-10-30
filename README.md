@@ -5,6 +5,7 @@
 ### Installation Using PyPi
 
 ```sh
+pip install deeplookup
 ```
 
 ## Using DeepLookup
@@ -29,7 +30,7 @@ ip:  142.250.184.206
 
 When the queried name is generated using domain generation algorith, the resolver throws
 [`dns.resolver.NXDOMAIN`](dns-nxdomain) without even accessing a remote nameserver.
-```
+```py
 for ip in resolver.resolve("mjewnjixnjaa.com", "A"):
     print("ip: ", ip.to_text())
 ```
