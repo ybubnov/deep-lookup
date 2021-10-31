@@ -21,9 +21,10 @@ setuptools.setup(
     author_email="girokompass@gmail.com",
     classifiers=[
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache Software License",
     ],
     packages=setuptools.find_packages(exclude=["tests"]),
+    package_data={"deeplookup": ["weights/*.h5"]},
     tests_require=[
         "pytest>=6.0.0",
         "pytest-benchmark>=3.4.0",
