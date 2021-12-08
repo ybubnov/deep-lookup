@@ -41,6 +41,7 @@ setuptools.setup(
         "h5py",
         "Keras>=2.4.3",
         "tensorflow>=2.4.1",
+        "tensorflow-datasets>=4.4.0",
         "pyts>=0.11.0",
         "keras-rl2>=1.0.4",
         "wandb>=0.12.0",
