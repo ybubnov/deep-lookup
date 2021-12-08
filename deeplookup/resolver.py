@@ -1,11 +1,11 @@
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
 import dns
 import dns.name
-import dns.resolver
-import dns.rdatatype
 import dns.rdataclass
+import dns.rdatatype
+import dns.resolver
 import numpy as np
 import tensorflow as tf
 
@@ -20,7 +20,7 @@ class Resolver(dns.resolver.Resolver):
         self,
         filename="/etc/resolv.conf",
         configure: bool = True,
-        modelname: str = "b-dga-ybubnov",
+        modelname: str = "gta-v0",
     ) -> None:
         super().__init__(filename, configure)
 

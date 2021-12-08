@@ -18,21 +18,21 @@ from deeplookup import Resolver
 resolver = Resolver()
 
 for ip in resolver.resolve("google.com", "A"):
-    print("ip: ", ip.to_text())
+    print(f"ip: {ip.to_text()}")
 ```
 
 The code above, performs a veficiation of a queried name using a nerual network trained
 to detect malicious queries ([DGAs][dga-wiki] and tunnels). For the example above the
 output will look like following:
 ```sh
-ip:  142.250.184.206
+ip: 142.250.184.206
 ```
 
 When the queried name is generated using domain generation algorith, the resolver throws
 [`dns.resolver.NXDOMAIN`](dns-nxdomain) without even accessing a remote nameserver.
 ```py
 for ip in resolver.resolve("mjewnjixnjaa.com", "A"):
-    print("ip: ", ip.to_text())
+    print(f"ip: {ip.to_text()}")
 ```
 
 The output of the example above will throw the following error:
