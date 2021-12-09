@@ -48,6 +48,7 @@ dns.resolver.NXDOMAIN: The DNS query name does not exist: mjewnjixnjaa.com.
 ## Datasets
 1. Bubnov Y. (2019) DNS Tunneling Queries for Binary Classification, [_Mendeley Data_][DTQBC, 2019], v1.
 2. Zago M., Perez. M.G., Perez G.M. (2020) UMUDGA - University of Murcia Domain Generation Algorithm Dataset, [_Mendeley Data_][UMUDGA, 2020], v1.
+3. Bybnov Y. (2021) DGTA-BENCH - Domain Generation and Tunneling Algorithms for Benchmark, [_Mendeley Data_][DGTA, 2021], v1.
 
 
 [Informatics, 2020]: https://doi.org/10.37661/1816-0301-2020-17-3-78-86
@@ -55,6 +56,7 @@ dns.resolver.NXDOMAIN: The DNS query name does not exist: mjewnjixnjaa.com.
 [BGUIR, 2021]: https://doi.org/10.35596/1729-7648-2021-19-2-91-99
 [UMUDGA, 2020]: http://dx.doi.org/10.17632/y8ph45msv8.1
 [DTQBC, 2019]: http://dx.doi.org/10.17632/mzn9hvdcxg.1
+[DGTA, 2021]: http://dx.doi.org/10.17632/2wzf9bz7xr.1
 
 [dga-wiki]: https://en.wikipedia.org/wiki/Domain_generation_algorithm
 [dns-resolver]: https://dnspython.readthedocs.io/en/latest/resolver-class.html
