@@ -3,8 +3,8 @@ from functools import partial
 from typing import Callable
 
 import numpy as np
-
 import wandb
+
 from deeplookup import datasets, metrics, nn
 
 
