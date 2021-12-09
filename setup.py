@@ -14,7 +14,7 @@ with open(os.path.join(here, "README.md"), encoding="utf-8") as md:
 version_path = os.path.join(os.path.dirname(__file__), "deeplookup")
 sys.path.append(version_path)
 
-from version import __version__
+from version import __version__  # noqa
 
 
 setuptools.setup(
