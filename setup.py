@@ -1,4 +1,5 @@
 import os
+import sys
 
 import setuptools
 
@@ -10,9 +11,15 @@ with open(os.path.join(here, "README.md"), encoding="utf-8") as md:
     long_description = md.read()
 
 
+version_path = os.path.join(os.path.dirname(__file__), "deeplookup")
+sys.path.append(version_path)
+
+from version import __version__
+
+
 setuptools.setup(
     name="deeplookup",
-    version="0.0.1",
+    version=__version__,
     long_description=long_description,
     long_description_content_type="text/markdown",
     description="Deep Lookup - Deep Learning for Domain Name System",
