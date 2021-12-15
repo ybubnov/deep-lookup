@@ -4,8 +4,8 @@ from typing import Callable, Dict, Optional
 
 import pandas as pd
 import tensorflow as tf
-from keras import Sequential
-from keras.layers import (
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import (
     LSTM,
     AlphaDropout,
     Bidirectional,
@@ -19,8 +19,8 @@ from keras.layers import (
     Input,
     Reshape,
 )
-from keras.metrics import AUC
-from keras.models import Model
+from tensorflow.keras.metrics import AUC
+from tensorflow.keras.models import Model
 from wandb.keras import WandbCallback
 
 from deeplookup.datasets import en2vec
@@ -131,9 +131,14 @@ def create_vosoughi_rcnn(num_classes: int = 2) -> tf.keras.Model:
     return model
 
 
-def create_rcnn(num_classes: int = 2, bidir: bool = False) -> tf.keras.Model:
-    x = Input(shape=(256,), dtype="int64")
-    em1 = Embedding(en2vec.corpus_size + 1, 128, input_length=256)(x)
+def create_rcnn(
+    num_classes: int = 2,
+    corpus_size: int = en2vec.corpus_size,
+    input_name: str = "input_1",
+    bidir: bool = False,
+) -> tf.keras.Model:
+    x = Input(shape=(256,), dtype="int64", name=input_name)
+    em1 = Embedding(corpus_size + 1, 128, input_length=256)(x)
 
     conv1 = Convolution1D(filters=64, kernel_size=2)(em1)
     conv2 = Convolution1D(filters=64, kernel_size=3)(em1)
