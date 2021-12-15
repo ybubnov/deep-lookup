@@ -5,8 +5,8 @@ from typing import Callable, Tuple
 
 import numpy as np
 import pandas as pd
-from keras.utils import to_categorical
 from pandas.api.types import CategoricalDtype
+from tensorflow.keras.utils import to_categorical
 
 
 class str2vec:

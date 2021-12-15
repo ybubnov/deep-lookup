@@ -17,8 +17,8 @@ _DESCRIPTION = (
     "4 of which are DTA, 50 of which are DGA and 1 legitimate class."
 )
 
-_GTABENCH_URL = "https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com"
-_GTABENCH_DATA_FILENAME = "2wzf9bz7xr-1.zip"
+_GTA_URL = "https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com"
+_GTA_DATA_FILENAME = "2wzf9bz7xr-1.zip"
 
 _NAMES = [
     "legit",
@@ -78,13 +78,13 @@ _NAMES = [
     "ranbyus_v2",
 ]
 
-GTABENCH_NUM_CLASSES = len(_NAMES)
+GTA_NUM_CLASSES = len(_NAMES)
 
 
-class GtaBench(tfds.core.GeneratorBasedBuilder):
+class Gta1(tfds.core.GeneratorBasedBuilder):
     """DGTA-BENCH dataset."""
 
-    URL = _GTABENCH_URL
+    URL = _GTA_URL
     VERSION = tfds.core.Version("1.0.0")
 
     def _info(self) -> tfds.core.DatasetInfo:
@@ -108,7 +108,7 @@ class GtaBench(tfds.core.GeneratorBasedBuilder):
         dataset_files = dl_manager.download(
             {
                 "dataset_archive": urllib.parse.urljoin(
-                    self.URL, _GTABENCH_DATA_FILENAME
+                    self.URL, _GTA_DATA_FILENAME
                 ),
             }
         )
@@ -125,7 +125,7 @@ class GtaBench(tfds.core.GeneratorBasedBuilder):
     ) -> tfds.core.split_builder.SplitGenerator:
         """Generate examples of domain names with associated class label."""
         with ZipFile(str(dataset_archive_path)) as dataset_archive:
-            root_dirname = Path(_GTABENCH_DATA_FILENAME).stem
+            root_dirname = Path(_GTA_DATA_FILENAME).stem
             parquet_path = f"/{root_dirname}/gta-v1.parquet"
 
             with dataset_archive.open(parquet_path) as parquet_file:
