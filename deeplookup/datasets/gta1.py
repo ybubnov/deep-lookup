@@ -107,9 +107,7 @@ class Gta1(tfds.core.GeneratorBasedBuilder):
         """Define the train and test split."""
         dataset_files = dl_manager.download(
             {
-                "dataset_archive": urllib.parse.urljoin(
-                    self.URL, _GTA_DATA_FILENAME
-                ),
+                "dataset_archive": urllib.parse.urljoin(self.URL, _GTA_DATA_FILENAME),
             }
         )
 
