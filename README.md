@@ -52,7 +52,7 @@ python -m deeplookup.pipeline.gta1
 ```
 
 This command creates a folder called "tfx", where all artifacts are persisted. See the
-`tfx/pipelines/gta1/serving_model/gta1/*" folder to access the model in HDF5 format.
+`tfx/pipelines/gta1/serving_model/gta1/*` folder to access the model in HDF5 format.
 
 ## Publications
 1. Bubnov Y., Ivanov N. (2020) Text analysis of DNS queries for data exfiltration protection of computer networks, [_Informatics_][Informatics, 2020], 3, 78-86.
