@@ -50,6 +50,7 @@ setuptools.setup(
         "tensorflow-datasets>=4.0.0",
         "tensorflow-text>=2.0.0",
         "tensorflow-transform>=1.0.0",
+        "tfx>=1.0.0",
         "pyts>=0.11.0",
         "keras-rl2>=1.0.4",
         "wandb>=0.12.0",
