@@ -10,6 +10,9 @@ from tfx_bsl.tfxio import dataset_options
 from deeplookup.nn import create_rcnn as build_keras_model
 
 
+CORPUS_SIZE = 65535
+
+
 def _tokenize_domain(domains: tf.Tensor, sequence_length: int = 256) -> tf.Tensor:
     tokenizer = tf_text.UnicodeCharTokenizer()
 
@@ -23,6 +26,7 @@ def _tokenize_domain(domains: tf.Tensor, sequence_length: int = 256) -> tf.Tenso
     tokens = tf.pad(tokens, [[0, 0], [0, pad]], constant_values=pad_token)
 
     tokens = tf.reshape(tokens, [-1, sequence_length])
+    tokens = tf.clip_by_value(tokens, clip_value_min=0, clip_value_max=CORPUS_SIZE-1)
     return tf.cast(tokens, dtype=tf.int64)
 
 
@@ -45,12 +49,14 @@ def _input_fn(
     data_accessor: DataAccessor,
     tf_transform_output: tft.TFTransformOutput,
     batch_size: int = 200,
+    num_epochs: int = 30,
 ) -> tf.data.Dataset:
     dataset = data_accessor.tf_dataset_factory(
         file_pattern,
         dataset_options.TensorFlowDatasetOptions(
             batch_size=batch_size,
             label_key="class_xf",
+            num_epochs=num_epochs,
         ),
         tf_transform_output.transformed_metadata.schema,
     )
@@ -82,7 +88,7 @@ def run_fn(fn_args: FnArgs) -> None:
     )
 
     model = build_keras_model(
-        corpus_size=10_000,
+        corpus_size=CORPUS_SIZE,
         input_name="domain_xf_input",
         bidir=True,
     )
