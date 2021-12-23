@@ -26,7 +26,7 @@ def _tokenize_domain(domains: tf.Tensor, sequence_length: int = 256) -> tf.Tenso
     tokens = tf.pad(tokens, [[0, 0], [0, pad]], constant_values=pad_token)
 
     tokens = tf.reshape(tokens, [-1, sequence_length])
-    tokens = tf.clip_by_value(tokens, clip_value_min=0, clip_value_max=CORPUS_SIZE-1)
+    tokens = tf.clip_by_value(tokens, clip_value_min=0, clip_value_max=CORPUS_SIZE - 1)
     return tf.cast(tokens, dtype=tf.int64)
 
 
