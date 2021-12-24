@@ -95,7 +95,8 @@ def run_fn(fn_args: FnArgs) -> None:
         model.summary(print_fn=absl.logging.info)
 
     tensorboard_callback = tf.keras.callbacks.TensorBoard(
-        log_dir=fn_args.model_run_dir, update_freq='batch',
+        log_dir=fn_args.model_run_dir,
+        update_freq="batch",
     )
 
     model.fit(
