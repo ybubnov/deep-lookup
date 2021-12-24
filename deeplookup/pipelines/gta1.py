@@ -93,7 +93,7 @@ def create_pipeline(
         examples=transform.outputs["transformed_examples"],
         transform_graph=transform.outputs["transform_graph"],
         schema=schema_gen.outputs["schema"],
-        train_args=trainer_pb2.TrainArgs(num_steps=1000),
+        train_args=trainer_pb2.TrainArgs(num_steps=10_000),
         eval_args=trainer_pb2.EvalArgs(num_steps=500),
     )
 
