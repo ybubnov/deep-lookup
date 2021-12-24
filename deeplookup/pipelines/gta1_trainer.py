@@ -10,7 +10,7 @@ from tfx_bsl.tfxio import dataset_options
 from deeplookup.nn import create_rcnn as build_keras_model
 
 
-CORPUS_SIZE = 65535
+CORPUS_SIZE = 10000
 
 
 def _tokenize_domain(domains: tf.Tensor, sequence_length: int = 256) -> tf.Tensor:
@@ -49,14 +49,12 @@ def _input_fn(
     data_accessor: DataAccessor,
     tf_transform_output: tft.TFTransformOutput,
     batch_size: int = 200,
-    num_epochs: int = 30,
 ) -> tf.data.Dataset:
     dataset = data_accessor.tf_dataset_factory(
         file_pattern,
         dataset_options.TensorFlowDatasetOptions(
             batch_size=batch_size,
             label_key="class_xf",
-            num_epochs=num_epochs,
         ),
         tf_transform_output.transformed_metadata.schema,
     )
@@ -77,7 +75,7 @@ def run_fn(fn_args: FnArgs) -> None:
         fn_args.train_files,
         fn_args.data_accessor,
         tf_transform_output,
-        batch_size=256,
+        batch_size=128,
     )
 
     eval_dataset = _input_fn(
@@ -87,18 +85,27 @@ def run_fn(fn_args: FnArgs) -> None:
         batch_size=128,
     )
 
-    model = build_keras_model(
-        corpus_size=CORPUS_SIZE,
-        input_name="domain_xf_input",
-        bidir=True,
+    mirrored_strategy = tf.distribute.MirroredStrategy()
+    with mirrored_strategy.scope():
+        model = build_keras_model(
+            corpus_size=CORPUS_SIZE,
+            input_name="domain_xf_input",
+            bidir=True,
+        )
+        model.summary(print_fn=absl.logging.info)
+
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(
+        log_dir=fn_args.model_run_dir,
+        update_freq="batch",
     )
-    model.summary(print_fn=absl.logging.info)
 
     model.fit(
         train_dataset,
         steps_per_epoch=fn_args.train_steps,
         validation_data=eval_dataset,
         validation_steps=fn_args.eval_steps,
+        callbacks=[tensorboard_callback],
+        epochs=2,
     )
 
     model.save(fn_args.serving_model_dir + "/model.h5", save_format="h5")
