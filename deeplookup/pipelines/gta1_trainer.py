@@ -75,14 +75,14 @@ def run_fn(fn_args: FnArgs) -> None:
         fn_args.train_files,
         fn_args.data_accessor,
         tf_transform_output,
-        batch_size=128,
+        batch_size=32,
     )
 
     eval_dataset = _input_fn(
         fn_args.eval_files,
         fn_args.data_accessor,
         tf_transform_output,
-        batch_size=128,
+        batch_size=32,
     )
 
     mirrored_strategy = tf.distribute.MirroredStrategy()
