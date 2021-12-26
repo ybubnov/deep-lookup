@@ -6,11 +6,9 @@ import dns.name
 import dns.rdataclass
 import dns.rdatatype
 import dns.resolver
-import numpy as np
 import tensorflow as tf
 
 from deeplookup import weights
-from deeplookup.datasets import en2vec
 from deeplookup.pipelines.gta1_trainer import _tokenize_domain
 
 
