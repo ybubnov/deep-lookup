@@ -11,6 +11,7 @@ import tensorflow as tf
 
 from deeplookup import weights
 from deeplookup.datasets import en2vec
+from deeplookup.pipelines.gta1_trainer import _tokenize_domain
 
 
 class Resolver(dns.resolver.Resolver):
@@ -20,7 +21,7 @@ class Resolver(dns.resolver.Resolver):
         self,
         filename="/etc/resolv.conf",
         configure: bool = True,
-        modelname: str = "gta-v0",
+        modelname: str = "gta-v1",
     ) -> None:
         super().__init__(filename, configure)
 
@@ -29,8 +30,8 @@ class Resolver(dns.resolver.Resolver):
 
     def predict_proba(self, qname: str) -> float:
         """Returns a probability between 0 and 1 that given *qname* is malicious."""
-        x = en2vec.convert(qname)
-        return self.model.predict(np.asarray([x], dtype="int64"))[0][1]
+        x = _tokenize_domain(tf.constant([[qname]]))
+        return self.model.predict(x.numpy())[0][1]
 
     def resolve(
         self,
