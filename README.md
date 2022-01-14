@@ -60,6 +60,20 @@ This command creates a folder called "tfx", where all artifacts are persisted. S
 3. Bubnov Y., Ivanov N. (2021) DGA domain detection and botnet prevention using Q-learning for POMDP, [_Doklady BGUIR_][BGUIR, 2021], 2, 91-99.
 
 ## Datasets
+
+The most robust dataset [DGTA-BENCH][DGTA, 2021] is available through
+[tensorflow datasets](https://www.tensorflow.org/datasets) API and used for training
+other neural network architectures:
+```py
+import deeplookup.datasets as dlds
+import tensorflow_datasets as tfds
+
+ds = tfds.load("gta1", shuffle_files=True)
+
+for example in ds.take(1):
+  domain, label = example["domain"], example["class"]
+```
+
 1. Bubnov Y. (2019) DNS Tunneling Queries for Binary Classification, [_Mendeley Data_][DTQBC, 2019], v1.
 2. Zago M., Perez. M.G., Perez G.M. (2020) UMUDGA - University of Murcia Domain Generation Algorithm Dataset, [_Mendeley Data_][UMUDGA, 2020], v1.
 3. Bybnov Y. (2021) DGTA-BENCH - Domain Generation and Tunneling Algorithms for Benchmark, [_Mendeley Data_][DGTA, 2021], v1.
