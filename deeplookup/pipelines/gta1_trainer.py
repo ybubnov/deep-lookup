@@ -15,7 +15,9 @@ CORPUS_SIZE = 10000
 
 @tf.function(input_signature=[tf.TensorSpec(shape=(None, 1), dtype=tf.string)])
 def _tokenize_domain(
-    domains: tf.Tensor, sequence_length: int = 256, corpus_size: int = CORPUS_SIZE,
+    domains: tf.Tensor,
+    sequence_length: int = 256,
+    corpus_size: int = CORPUS_SIZE,
 ) -> tf.Tensor:
     tokenizer = tf_text.UnicodeCharTokenizer()
 
